@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		64A8066327443F2000BF6584 /* SomethingCool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SomethingCool.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64A8066327443F2000BF6584 /* Bouncy Pop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bouncy Pop.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A8066627443F2000BF6584 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		64A8066827443F2000BF6584 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		64A8066C27443F2000BF6584 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -50,7 +50,7 @@
 		64A8066427443F2000BF6584 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				64A8066327443F2000BF6584 /* SomethingCool.app */,
+				64A8066327443F2000BF6584 /* Bouncy Pop.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,9 +73,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		64A8066227443F2000BF6584 /* SomethingCool */ = {
+		64A8066227443F2000BF6584 /* Bouncy Pop */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 64A8067827443F2100BF6584 /* Build configuration list for PBXNativeTarget "SomethingCool" */;
+			buildConfigurationList = 64A8067827443F2100BF6584 /* Build configuration list for PBXNativeTarget "Bouncy Pop" */;
 			buildPhases = (
 				64A8065F27443F2000BF6584 /* Sources */,
 				64A8066027443F2000BF6584 /* Frameworks */,
@@ -85,9 +85,9 @@
 			);
 			dependencies = (
 			);
-			name = SomethingCool;
+			name = "Bouncy Pop";
 			productName = SomethingCool;
-			productReference = 64A8066327443F2000BF6584 /* SomethingCool.app */;
+			productReference = 64A8066327443F2000BF6584 /* Bouncy Pop.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -104,7 +104,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 64A8065E27443F2000BF6584 /* Build configuration list for PBXProject "SomethingCool" */;
+			buildConfigurationList = 64A8065E27443F2000BF6584 /* Build configuration list for PBXProject "Bouncy Pop" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -117,7 +117,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				64A8066227443F2000BF6584 /* SomethingCool */,
+				64A8066227443F2000BF6584 /* Bouncy Pop */,
 			);
 		};
 /* End PBXProject section */
@@ -316,7 +316,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		64A8065E27443F2000BF6584 /* Build configuration list for PBXProject "SomethingCool" */ = {
+		64A8065E27443F2000BF6584 /* Build configuration list for PBXProject "Bouncy Pop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				64A8067627443F2100BF6584 /* Debug */,
@@ -325,7 +325,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		64A8067827443F2100BF6584 /* Build configuration list for PBXNativeTarget "SomethingCool" */ = {
+		64A8067827443F2100BF6584 /* Build configuration list for PBXNativeTarget "Bouncy Pop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				64A8067927443F2100BF6584 /* Debug */,
