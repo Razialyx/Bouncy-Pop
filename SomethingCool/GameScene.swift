@@ -8,81 +8,126 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+
+
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    private final var SPEED = 3
+    var lastPoint = CGPoint.zero
+    var color = UIColor.black
+    var brushWidth: CGFloat = 10.0
+    var opacity: CGFloat = 1.0
+    var swiped = false
     
     override func didMove(to view: SKView) {
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+        physicsWorld.contactDelegate = self
+        
+        // creates bouncy border
+        let border = SKPhysicsBody(edgeLoopFrom: frame)
+//        let topBorder = SKPhysicsBody(edgeFrom: CGPoint(x: 500, y: 500), to: CGPoint(x: 500, y: 700))
+//        topBorder.friction = 500
+        border.friction = 0
+        border.restitution = 1
+        self.physicsBody = border
+        
+//        drawPath(from: projectile.position, to: projectile.position)
+        
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        if contact.bodyA.node?.name == "proj" && contact.bodyB.node?.name == "proj" {
+            contact.bodyA.node?.physicsBody?.isDynamic = false
+            contact.bodyB.node?.physicsBody?.isDynamic = false
+            print ("test")
         }
     }
     
     
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
+//    func touchDown(atPoint pos : CGPoint) {
+//    }
+//
+//    func touchMoved(toPoint pos : CGPoint) {
+//    }
+//
+//    func touchUp(atPoint pos : CGPoint) {
+//    }
     
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
+
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
+        var ball = Ball(touches)
+        addChild(ball)
         
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+                
     }
+    
+    func drawPath(from fromPoint: CGPoint, to toPoint: CGPoint) {
+      // 1
+        UIGraphicsBeginImageContext(view!.frame.size)
+      guard let context = UIGraphicsGetCurrentContext() else {
+        return
+      }
+
+        view?.draw(view!.layer, in: context)
+
+      // 2
+      context.move(to: fromPoint)
+      context.addLine(to: toPoint)
+
+      // 3
+      context.setLineCap(.round)
+      context.setBlendMode(.normal)
+      context.setLineWidth(brushWidth)
+      context.setStrokeColor(color.cgColor)
+
+      // 4
+      context.strokePath()
+
+//       5
+//      tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+//      tempImageView.alpha = opacity
+      UIGraphicsEndImageContext()
+
+
+
+
+      // 6
+
+//        let currentPoint = projectile.position
+//      drawPath(from: lastPoint, to: currentPoint)
+//
+//      // 7
+//      lastPoint = currentPoint
+    }
+    
+
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+
     }
-    
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+
+
     }
-    
+
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+
     }
-    
-    
+
+
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
     }
+    
+    
+    
+    
 }
+
+
