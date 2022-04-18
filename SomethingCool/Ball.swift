@@ -13,41 +13,7 @@ import GameplayKit
 
 // creates custom arithmetic functions for CGPoints specifically
 
-func +(left: CGPoint, right: CGPoint) -> CGPoint {
-  return CGPoint(x: left.x + right.x, y: left.y + right.y)
-}
 
-func -(left: CGPoint, right: CGPoint) -> CGPoint {
-  return CGPoint(x: left.x - right.x, y: left.y - right.y)
-}
-
-func *(point: CGPoint, scalar: CGFloat) -> CGPoint {
-  return CGPoint(x: point.x * scalar, y: point.y * scalar)
-}
-
-func /(point: CGPoint, scalar: CGFloat) -> CGPoint {
-  return CGPoint(x: point.x / scalar, y: point.y / scalar)
-}
-
-// function to square root
-
-#if !(arch(x86_64) || arch(arm64))
-  func sqrt(a: CGFloat) -> CGFloat {
-    return CGFloat(sqrtf(Float(a)))
-  }
-#endif
-
-// gets the length between two points using Pythagorean theorem
-
-extension CGPoint {
-  func length() -> CGFloat {
-    return sqrt(x*x + y*y)
-  }
-  
-  func normalized() -> CGPoint {
-    return self / length()
-  }
-}
 
 class Ball: SKNode {
     
@@ -90,8 +56,8 @@ class Ball: SKNode {
         
         projectile.name = "proj"
 //        projectile.position = CGPoint(x: 0,y: -667)
-        projectile.position = touchLocation
-        
+//        projectile.position = touchLocation
+        self.position = touchLocation
         // Determine offset of location to projectile
         let offset = touchLocation - projectile.position
         
@@ -109,12 +75,13 @@ class Ball: SKNode {
         projectile.physicsBody!.linearDamping = 0
         projectile.physicsBody!.mass = 0.1
         
+        print (touchLocation)
         addChild(projectile)
         
         // Makes vector for the ball to shoot on
         let vect = CGVector(dx: offset.x, dy: offset.y)
         
-        print (offset)
+//        print (offset)
         
         // Creates the Force action
         let launch = SKAction.applyForce(vect, duration: 0.1)
