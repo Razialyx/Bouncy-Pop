@@ -54,16 +54,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var color = UIColor.black
     var brushWidth: CGFloat = 10.0
     var opacity: CGFloat = 1.0
-    var boxTime = false
+    var barTime = false
     
     var shotBalls = [SKSpriteNode]()
+    var madeBars = [SKSpriteNode]()
     var resetButton: SKSpriteNode!
     var hammerButton: SKSpriteNode!
-    var boxesLabel: SKLabelNode!
+    var barsLabel: SKLabelNode!
     var cannon: SKSpriteNode!
-    var boxes = 0
+    var bars = 0
+    var image: String = ""
+    var pos: CGFloat = 2
     
     override func didMove(to view: SKView) {
+        
+        randomizeBall()
         
         resetButton = SKSpriteNode(imageNamed: "Restart Button")
         resetButton.position = CGPoint(x: 60, y: 60)
@@ -75,18 +80,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hammerButton.zPosition = 2
         addChild(hammerButton)
         
-        boxesLabel = SKLabelNode(text: "Bars Remaining: 0")
-        boxesLabel.position = CGPoint(x: 570, y: 40)
-        addChild(boxesLabel)
+        barsLabel = SKLabelNode(text: "Bars Available: 0")
+        barsLabel.position = CGPoint(x: 570, y: 40)
+        addChild(barsLabel)
         
         cannon = SKSpriteNode(imageNamed: "cannon")
         cannon.position = CGPoint(x: 350, y: 70)
         cannon.zPosition = 2
         addChild(cannon)
         
-        
-        
         physicsWorld.contactDelegate = self
+        
+        setUp()
         
         // creates bouncy border
         let border = SKPhysicsBody(edgeLoopFrom: frame)
@@ -110,8 +115,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
                 contact.bodyA.node?.removeFromParent()
                 contact.bodyB.node?.removeFromParent()
-                boxes += 1
-                boxesLabel.text = "Bars Remaining: \(boxes)"
+                bars += 1
+                barsLabel.text = "Bars Available: \(bars)"
             }
         }
         
@@ -133,24 +138,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        print(boxTime)
+        
         
         if let touch = touches.first {
             let location = touch.location(in: self)
             let tappedNodes = nodes(at: location)
             if tappedNodes.contains(resetButton) {
-                boxTime = false
+                
                 for node in shotBalls {
                     node.removeFromParent()
                 }
+                for node in madeBars {
+                    node.removeFromParent()
+                }
+                barTime = false
+                bars = 0
+                barsLabel.text = "Bars Available: 0"
+                setUp()
             }
             if tappedNodes.contains(hammerButton) {
                 
-                boxTime = !boxTime
-            } else {
-                if boxTime {
-                    makeBox(touches)
+                barTime = !barTime
+                
+                if barTime {
+                    hammerButton.texture = SKTexture(imageNamed: "hammerDown")
+                    
                 } else {
+                    hammerButton.texture = SKTexture(imageNamed: "hammer")
+                    
+                }
+                
+            } else {
+                if barTime {
+                    hammerButton.texture = SKTexture(imageNamed: "hammerDown")
+                    makeBar(touches)
+                } else {
+                    hammerButton.texture = SKTexture(imageNamed: "hammer")
                     makeBall(touches)
                 }
             }
@@ -159,31 +182,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func makeBall(_ touches: Set<UITouch>) {
-        let num = Int.random(in: 1...6)
-        var image: String
-        switch num {
-        case 1:
-            image = "ballBlue"
-            break
-        case 2:
-            image = "ballCyan"
-            break
-        case 3:
-            image = "ballGreen"
-            break
-        case 4:
-            image = "ballGrey"
-            break
-        case 5:
-            image = "ballRed"
-            break
-        case 6:
-            image = "ballYellow"
-            break
-        default:
-            image = "ballPurple"
-            
-        }
+        
         let projectile = SKSpriteNode(imageNamed: image)
         // Chooses one of the touches to work with
         guard let touch = touches.first else {
@@ -195,7 +194,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         projectile.name = image
         projectile.position = CGPoint(x: 360,y: 0) //-667
-        print(projectile.texture)
         //        projectile.position = touchLocation
         self.position = touchLocation
         // Determine offset of location to projectile
@@ -231,100 +229,146 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         projectile.run(launch)
+        
+       randomizeBall()
+        
+    let preview = SKSpriteNode(imageNamed: image)
+        
+        preview.position = CGPoint(x: 350, y: 50)
+        preview.zPosition = pos
+        addChild(preview)
+        pos += 1
+        
+        
     }
     
-    func makeBox(_ touches: Set<UITouch>) {
+    func randomizeBall() {
+        let num = Int.random(in: 1...6)
         
-        boxes -= 1
-        boxesLabel.text = "Bars Remaining: \(boxes)"
         
-        if (boxes > 0) {
+        switch num {
+        case 1:
+            image = "ballBlue"
+            break
+        case 2:
+            image = "ballCyan"
+            break
+        case 3:
+            image = "ballGreen"
+            break
+        case 4:
+            image = "ballGrey"
+            break
+        case 5:
+            image = "ballRed"
+            break
+        case 6:
+            image = "ballYellow"
+            break
+        default:
+            image = "ballPurple"
+            
+        }
+    }
+    
+    func makeBar(_ touches: Set<UITouch>) {
+        
+        
+        let width = 10
+        let height = 80
+        
+        if (bars > 0) {
             
         
         guard let touch = touches.first else {
             return
         }
         let touchLocation = touch.location(in: self)
-        let box = SKSpriteNode(color: .blue, size: CGSize(width: 20, height: 70))
-        box.physicsBody = SKPhysicsBody(rectangleOf: size)
-        box.physicsBody!.isDynamic = false
-        box.zRotation = CGFloat.random(in: 0...5)
-        box.position = touchLocation
-        box.name = "box"
-        addChild(box)
+        let bar = SKSpriteNode(color: .blue, size: CGSize(width: width, height: height))
+        bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width, height: height))
+        bar.physicsBody!.isDynamic = false
+        bar.zRotation = CGFloat.random(in: 0...5)
+        bar.position = touchLocation
+        bar.name = "bar"
+        madeBars.append(bar)
+        addChild(bar)
+            bars -= 1
+            barsLabel.text = "Bars Available: \(bars)"
         } else {
-            boxes = 0
-            boxTime = false
+            bars = 0
+            barTime = false
         }
+        
+        
     }
     
-    //    func setUp() {
-    //        let num = Int.random(in: 1...6)
-    //        var image: String
-    //        switch num {
-    //        case 1:
-    //            image = "ballBlue"
-    //            break
-    //        case 2:
-    //            image = "ballCyan"
-    //            break
-    //        case 3:
-    //            image = "ballGreen"
-    //            break
-    //        case 4:
-    //            image = "ballGrey"
-    //            break
-    //        case 5:
-    //            image = "ballRed"
-    //            break
-    //        case 6:
-    //            image = "ballYellow"
-    //            break
-    //        default:
-    //            image = "ballPurple"
-    //
-    //        }
-    //        let projectile = SKSpriteNode(imageNamed: image)
-    //        // Chooses one of the touches to work with
-    //
-    //
-    //        // Sets up initial location of ball
-    //
-    //        projectile.name = "image"
-    //        projectile.position = CGPoint(x: 360,y: 0) //-667
-    ////        projectile.position = touchLocation
-    //
-    //
-    //
-    //
-    //        // gives all the properties to the ball
-    //
-    //        projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2.0)
-    //        projectile.physicsBody?.affectedByGravity = false;
-    //        projectile.physicsBody!.contactTestBitMask = projectile.physicsBody!.collisionBitMask
-    //        projectile.physicsBody!.restitution = 1
-    //        projectile.physicsBody?.isDynamic = true
-    //        projectile.zPosition = 1
-    //        projectile.physicsBody!.linearDamping = 0
-    //        projectile.physicsBody!.mass = 0.1
-    //
-    //        shotBalls.append(projectile)
-    //        addChild(projectile)
-    //
-    //        // Makes vector for the ball to shoot on
-    //        let vect = CGVector(dx: offset.x, dy: offset.y)
-    //
-    ////        print (offset)
-    //
-    //        let length = sqrt(vect.dx * vect.dx + vect.dy * vect.dy)
-    //        let time = 70/length
-    //        // Creates the Force action
-    //
-    //        let launch = SKAction.applyForce(vect, duration: TimeInterval(time))
-    //
-    //
-    //        projectile.run(launch)
-    //    }
+    func createSetUpBall(x: CGFloat, y: CGFloat) {
+            
+            let num = Int.random(in: 1...6)
+            
+            switch num {
+            case 1:
+                image = "ballBlue"
+                break
+            case 2:
+                image = "ballCyan"
+                break
+            case 3:
+                image = "ballGreen"
+                break
+            case 4:
+                image = "ballGrey"
+                break
+            case 5:
+                image = "ballRed"
+                break
+            case 6:
+                image = "ballYellow"
+                break
+            default:
+                image = "ballPurple"
+    
+            }
+            let ball = SKSpriteNode(imageNamed: image)
+            // Chooses one of the touches to work with
+    
+    
+            // Sets up initial location of ball
+    
+            ball.name = image
+            ball.position = CGPoint(x: x,y: y)
+    
+            // gives all the properties to the ball
+    
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
+            ball.physicsBody?.affectedByGravity = false;
+            ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
+            ball.physicsBody!.restitution = 1
+            ball.physicsBody?.isDynamic = false
+            ball.zPosition = 1
+            ball.physicsBody!.linearDamping = 0
+            ball.physicsBody!.mass = 0.1
+    
+        shotBalls.append(ball)
+            addChild(ball)
+            
+            
+        }
+    
+    func setUp() {
+        for i in 1...13 {
+            createSetUpBall(x: CGFloat(i*50), y: 1300)
+        }
+        for i in 1...12 {
+            createSetUpBall(x: CGFloat(i*50 + 25), y: 1250)
+        }
+        for i in 1...13 {
+            createSetUpBall(x: CGFloat(i*50), y: 1200)
+        }
+        for i in 1...12 {
+            createSetUpBall(x: CGFloat(i*50 + 25), y: 1150)
+        }
+    }
     
     func drawPath(from fromPoint: CGPoint, to toPoint: CGPoint) {
         // 1
