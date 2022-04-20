@@ -33,6 +33,8 @@ func sqrt(a: CGFloat) -> CGFloat {
 }
 #endif
 
+
+
 // gets the length between two points using Pythagorean theorem
 
 extension CGPoint {
@@ -67,6 +69,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var pos: CGFloat = 2
     
     override func didMove(to view: SKView) {
+        
+        let background = SKSpriteNode(imageNamed: "background")
+        
+        background.position = CGPoint(x: 360, y: 620)
+        background.blendMode = .replace
+        background.zPosition = -1
+        addChild(background)
         
         randomizeBall()
         
@@ -110,14 +119,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if shotBalls.contains(contact.bodyA.node as! SKSpriteNode) && shotBalls.contains(contact.bodyB.node! as! SKSpriteNode) {
                 contact.bodyA.node?.physicsBody?.isDynamic = false
                 contact.bodyB.node?.physicsBody?.isDynamic = false
-                print ("test")
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
                 contact.bodyA.node?.removeFromParent()
                 contact.bodyB.node?.removeFromParent()
+                chainReaction(ball: contact.bodyB, color: (contact.bodyA.node?.name)!)
+                
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
             }
+            
         }
         
         
@@ -125,14 +136,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    //    func touchDown(atPoint pos : CGPoint) {
-    //    }
-    //
-    //    func touchMoved(toPoint pos : CGPoint) {
-    //    }
-    //
-    //    func touchUp(atPoint pos : CGPoint) {
-    //    }
+        func touchDown(atPoint pos : CGPoint) {
+        }
+    
+        func touchMoved(toPoint pos : CGPoint) {
+        }
+    
+        func touchUp(atPoint pos : CGPoint) {
+        }
     
     
     
@@ -222,7 +233,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //        print (offset)
         
         let length = sqrt(vect.dx * vect.dx + vect.dy * vect.dy)
-        let time = 70/length
+        let time = 100/length
         // Creates the Force action
         
         let launch = SKAction.applyForce(vect, duration: TimeInterval(time))
@@ -343,7 +354,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
             ball.physicsBody?.affectedByGravity = false;
             ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
-            ball.physicsBody!.restitution = 1
+            ball.physicsBody!.restitution = 0
             ball.physicsBody?.isDynamic = false
             ball.zPosition = 1
             ball.physicsBody!.linearDamping = 0
@@ -356,62 +367,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     
     func setUp() {
-        for i in 1...13 {
-            createSetUpBall(x: CGFloat(i*50), y: 1300)
+        
+        let width = 40
+        
+        for i in 1...17 {
+            createSetUpBall(x: CGFloat(i*width), y: 1300)
         }
-        for i in 1...12 {
-            createSetUpBall(x: CGFloat(i*50 + 25), y: 1250)
+        for i in 1...16 {
+            createSetUpBall(x: CGFloat(i*width + 25), y: 1260)
         }
-        for i in 1...13 {
-            createSetUpBall(x: CGFloat(i*50), y: 1200)
+        for i in 1...17 {
+            createSetUpBall(x: CGFloat(i*width), y: 1220)
         }
-        for i in 1...12 {
-            createSetUpBall(x: CGFloat(i*50 + 25), y: 1150)
+        for i in 1...16 {
+            createSetUpBall(x: CGFloat(i*width + 25), y: 1180)
         }
     }
     
-    func drawPath(from fromPoint: CGPoint, to toPoint: CGPoint) {
-        // 1
-        UIGraphicsBeginImageContext(view!.frame.size)
-        guard let context = UIGraphicsGetCurrentContext() else {
-            return
+    func chainReaction(ball: SKPhysicsBody, color: String) {
+        print ("chainReaction")
+        print (ball.allContactedBodies())
+        for body in ball.allContactedBodies() {
+            print (body.node?.name)
+            if body.node?.name == color {
+                chainReaction(ball: body, color: color)
+                body.node?.removeFromParent()
+            } else {
+                body.node?.removeFromParent()
+            }
         }
-        
-        view?.draw(view!.layer, in: context)
-        
-        // 2
-        context.move(to: fromPoint)
-        context.addLine(to: toPoint)
-        
-        // 3
-        context.setLineCap(.round)
-        context.setBlendMode(.normal)
-        context.setLineWidth(brushWidth)
-        context.setStrokeColor(color.cgColor)
-        
-        // 4
-        context.strokePath()
-        
-        //       5
-        //      tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        //      tempImageView.alpha = opacity
-        UIGraphicsEndImageContext()
-        
-        
-        
-        
-        // 6
-        
-        //        let currentPoint = projectile.position
-        //      drawPath(from: lastPoint, to: currentPoint)
-        //
-        //      // 7
-        //      lastPoint = currentPoint
     }
     
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first!
+        let offset = touch.location(in: self) - CGPoint(x: 350, y: 70)
+        let angle = atan(offset.y / offset.x)
+        cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        // if statement for x position, if greater than middle, yScale = -1
+        print (cannon.zRotation)
+        
         
     }
     
