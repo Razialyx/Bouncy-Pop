@@ -65,6 +65,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var barsLabel: SKLabelNode!
     var cannon: SKSpriteNode!
     var bars = 0
+    var badShots = 0 {
+        didSet {
+            if badShots % 2 == 0 {
+                addNewLayer(amount: 17, width: 35)
+            }
+        }
+    }
     var image: String = ""
     var pos: CGFloat = 2
     
@@ -123,10 +130,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
                 contact.bodyA.node?.removeFromParent()
                 contact.bodyB.node?.removeFromParent()
+                
                 chainReaction(ball: contact.bodyB, color: (contact.bodyA.node?.name)!)
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
+            } else {
+                badShots += 1
             }
             
         }
@@ -398,6 +408,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         for ball in shotBalls {
             print(ball.physicsBody?.allContactedBodies())
+        }
+    }
+    
+    func addNewLayer(amount: Int, width: Int) {
+        for i in 1...amount {
+            createSetUpBall(x: CGFloat(i*width), y: 1300)
         }
     }
     
