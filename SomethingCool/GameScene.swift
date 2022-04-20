@@ -213,6 +213,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Detects if you are shooting down or backwards and yeets that
         if offset.y < 0 { return }
         
+        let angle = atan(offset.y / offset.x)
+        cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        // if statement for x position, if greater than middle, yScale = -1
+        if touch.location(in: self).x > 360 {
+            cannon.yScale = -1
+            cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        } else {
+            cannon.yScale = 1
+            cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        }
+        
         // gives all the properties to the ball
         
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2.0)
@@ -351,7 +362,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
             // gives all the properties to the ball
     
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0 + 5)
+        
             ball.physicsBody?.affectedByGravity = false;
             ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
             ball.physicsBody!.restitution = 0
@@ -362,13 +374,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
         shotBalls.append(ball)
             addChild(ball)
+
+//        print (ball.physicsBody?.allContactedBodies())
             
             
         }
     
     func setUp() {
         
-        let width = 40
+        let width = 35
         
         for i in 1...17 {
             createSetUpBall(x: CGFloat(i*width), y: 1300)
@@ -381,6 +395,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         for i in 1...16 {
             createSetUpBall(x: CGFloat(i*width + 25), y: 1180)
+        }
+        for ball in shotBalls {
+            print(ball.physicsBody?.allContactedBodies())
         }
     }
     
@@ -403,10 +420,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first!
         let offset = touch.location(in: self) - CGPoint(x: 350, y: 70)
-        let angle = atan(offset.y / offset.x)
-        cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
-        // if statement for x position, if greater than middle, yScale = -1
-        print (cannon.zRotation)
+        
         
         
     }
