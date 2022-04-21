@@ -67,6 +67,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var barsLabel: SKLabelNode!
     var cannon: SKSpriteNode!
     var bars = 0
+    var badShots = 0 {
+        didSet {
+            if badShots % 2 == 0 {
+                addNewLayer(amount: 17, width: 35)
+            }
+        }
+    }
     var image: String = ""
     var pos: CGFloat = 2
     
@@ -129,6 +136,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
+            } else {
+                badShots += 1
             }
             
         }
@@ -214,6 +223,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Detects if you are shooting down or backwards and yeets that
         if offset.y < 0 { return }
+        
+        let angle = atan(offset.y / offset.x)
+        cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        // if statement for x position, if greater than middle, yScale = -1
+        if touch.location(in: self).x > 360 {
+            cannon.yScale = -1
+            cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        } else {
+            cannon.yScale = 1
+            cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
+        }
         
         // gives all the properties to the ball
         
@@ -354,7 +374,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
             // gives all the properties to the ball
     
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0 + 5)
+        
             ball.physicsBody?.affectedByGravity = false;
             ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
             ball.physicsBody!.restitution = 0
@@ -365,13 +386,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
         shotBalls.append(ball)
             addChild(ball)
+
+//        print (ball.physicsBody?.allContactedBodies())
             
             
         }
     
     func setUp() {
         
-        let width = 40
+        let width = 35
         
         for i in 1...17 {
             createSetUpBall(x: CGFloat(i*width), y: 1300)
@@ -384,6 +407,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         for i in 1...16 {
             createSetUpBall(x: CGFloat(i*width + 25), y: 1180)
+        }
+        for ball in shotBalls {
+            print(ball.physicsBody?.allContactedBodies())
+        }
+    }
+    
+    func addNewLayer(amount: Int, width: Int) {
+        for i in 1...amount {
+            createSetUpBall(x: CGFloat(i*width), y: 1300)
         }
     }
     
