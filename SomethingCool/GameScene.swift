@@ -25,6 +25,8 @@ func /(point: CGPoint, scalar: CGFloat) -> CGPoint {
     return CGPoint(x: point.x / scalar, y: point.y / scalar)
 }
 
+
+
 // function to square root
 
 #if !(arch(x86_64) || arch(arm64))
@@ -121,9 +123,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.physicsBody?.isDynamic = false
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
-                contact.bodyA.node?.removeFromParent()
-                contact.bodyB.node?.removeFromParent()
-                chainReaction(ball: contact.bodyB, color: (contact.bodyA.node?.name)!)
+//                contact.bodyA.node?.removeFromParent()
+//                contact.bodyB.node?.removeFromParent()
+                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
@@ -226,6 +228,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         shotBalls.append(projectile)
         addChild(projectile)
+        print (projectile.size.width)
         
         // Makes vector for the ball to shoot on
         let vect = CGVector(dx: offset.x, dy: offset.y)
@@ -384,30 +387,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func chainReaction(ball: SKPhysicsBody, color: String) {
-        print ("chainReaction")
-        print (ball.allContactedBodies())
-        for body in ball.allContactedBodies() {
-            print (body.node?.name)
-            if body.node?.name == color {
+    func chainReaction(ball: SKNode, color: String) {
+        
+        let location = (ball.position)
+        let balls = nodesNearPoint(container: self, point: location, maxDistance: 50)
+        
+//        print (balls)
+// same color nodes must be greater than 1
+        for body in balls {
+            if body.name == color {
                 chainReaction(ball: body, color: color)
-                body.node?.removeFromParent()
+                if body != nil {
+                body.removeFromParent()
+                }
             } else {
-                body.node?.removeFromParent()
+                body.removeFromParent()
             }
         }
+    }
+    
+    func nodesNearPoint(container:SKNode, point:CGPoint, maxDistance:CGFloat) -> [SKNode] {
+        var array = [SKNode]()
+        for node in container.children {
+            // Only test sprite nodes (optional)
+            if node is SKSpriteNode {
+                let dx = point.x - node.position.x
+                let dy = point.y - node.position.y
+
+                let distance = sqrt(dx*dx + dy*dy)
+                if (distance <= maxDistance) {
+                    array.append(node)
+                }
+            }
+        }
+        return array
     }
     
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first!
-        let offset = touch.location(in: self) - CGPoint(x: 350, y: 70)
-        let angle = atan(offset.y / offset.x)
-        cannon.zRotation = angle + CGFloat(0.5 * Double.pi)
-        // if statement for x position, if greater than middle, yScale = -1
-        print (cannon.zRotation)
-        
         
     }
     
