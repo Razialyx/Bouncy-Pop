@@ -66,11 +66,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var hammerButton: SKSpriteNode!
     var barsLabel: SKLabelNode!
     var cannon: SKSpriteNode!
+    var labelBackground: SKSpriteNode!
     var bars = 0
     var badShots = 0 {
         didSet {
-            if badShots % 2 == 0 {
-                addNewLayer(amount: 17, width: 35)
+            print (badShots)
+            if badShots != 0 {
+            if badShots % 8 == 0 {
+                shotBalls.last?.removeFromParent()
+                addNewLayer(amount: 17, width: 40, y: CGFloat(1180 - badShots * 20))
+                
+            } else if badShots % 4 == 0{
+                shotBalls.last?.removeFromParent()
+                addNewLayer(amount: 16, width: 40, y: CGFloat(1180 - badShots * 20))
+            }
             }
         }
     }
@@ -100,7 +109,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         barsLabel = SKLabelNode(text: "Bars Available: 0")
         barsLabel.position = CGPoint(x: 570, y: 40)
+        barsLabel.fontColor = .black
+        barsLabel.fontName = "Avenir Next Bold Italic"
         addChild(barsLabel)
+        
+        labelBackground = SKSpriteNode(color: UIColor.red, size: CGSize(width: CGFloat(barsLabel.frame.size.width + 5), height:CGFloat(barsLabel.frame.size.height + 5)))
+        labelBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(50))
+        addChild(labelBackground)
         
         cannon = SKSpriteNode(imageNamed: "cannon")
         cannon.position = CGPoint(x: 350, y: 70)
@@ -130,9 +145,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.physicsBody?.isDynamic = false
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
-//                contact.bodyA.node?.removeFromParent()
-//                contact.bodyB.node?.removeFromParent()
-                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
+                contact.bodyA.node?.removeFromParent()
+                contact.bodyB.node?.removeFromParent()
+//                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
@@ -175,10 +190,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 barTime = false
                 bars = 0
+                badShots = 0
                 barsLabel.text = "Bars Available: 0"
                 setUp()
-            }
-            if tappedNodes.contains(hammerButton) {
+            } else if tappedNodes.contains(hammerButton) {
                 
                 barTime = !barTime
                 
@@ -336,6 +351,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func addNewLayer(amount: Int, width: Int, y: CGFloat) {
+        for i in 1...amount {
+            createSetUpBall(x: CGFloat(i*width), y: y)
+        }
+    }
+    
     func createSetUpBall(x: CGFloat, y: CGFloat) {
             
             let num = Int.random(in: 1...6)
@@ -374,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
             // gives all the properties to the ball
     
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0 + 5)
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
         
             ball.physicsBody?.affectedByGravity = false;
             ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
@@ -383,18 +404,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ball.zPosition = 1
             ball.physicsBody!.linearDamping = 0
             ball.physicsBody!.mass = 0.1
+        
+        
     
         shotBalls.append(ball)
             addChild(ball)
 
-//        print (ball.physicsBody?.allContactedBodies())
+        let preview = SKSpriteNode(imageNamed: image)
+            
+            preview.position = CGPoint(x: 350, y: 50)
+            preview.zPosition = pos
+            addChild(preview)
+            pos += 1
             
             
         }
     
     func setUp() {
         
-        let width = 35
+        let width = 40
         
         for i in 1...17 {
             createSetUpBall(x: CGFloat(i*width), y: 1300)
@@ -413,29 +441,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func addNewLayer(amount: Int, width: Int) {
-        for i in 1...amount {
-            createSetUpBall(x: CGFloat(i*width), y: 1300)
-        }
-    }
+    
     
     func chainReaction(ball: SKNode, color: String) {
         
         let location = (ball.position)
         let balls = nodesNearPoint(container: self, point: location, maxDistance: 50)
-        
-//        print (balls)
-// same color nodes must be greater than 1
-        for body in balls {
-            if body.name == color {
-                chainReaction(ball: body, color: color)
-                if body != nil {
-                body.removeFromParent()
+        if (balls.count) > 1{
+            for body in balls {
+                if body.name == color {
+                    chainReaction(ball: body, color: color)
+                    if body != nil {
+                    body.removeFromParent()
+                    }
+                } else {
+                    body.removeFromParent()
                 }
-            } else {
-                body.removeFromParent()
             }
         }
+        
     }
     
     func nodesNearPoint(container:SKNode, point:CGPoint, maxDistance:CGFloat) -> [SKNode] {
@@ -472,7 +496,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        
     }
     
     
