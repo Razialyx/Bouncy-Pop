@@ -113,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         barsLabel.fontName = "Avenir Next Bold Italic"
         addChild(barsLabel)
         
-        labelBackground = SKSpriteNode(color: UIColor.red, size: CGSize(width: CGFloat(barsLabel.frame.size.width + 5), height:CGFloat(barsLabel.frame.size.height + 5)))
+        labelBackground = SKSpriteNode(color: UIColor.red, size: CGSize(width: CGFloat(barsLabel.frame.size.width + 20), height:CGFloat(barsLabel.frame.size.height + 5)))
         labelBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(50))
         addChild(labelBackground)
         
@@ -141,13 +141,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node! is SKSpriteNode {
             if shotBalls.contains(contact.bodyA.node as! SKSpriteNode) && shotBalls.contains(contact.bodyB.node! as! SKSpriteNode) {
+                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
                 contact.bodyA.node?.physicsBody?.isDynamic = false
                 contact.bodyB.node?.physicsBody?.isDynamic = false
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
-                contact.bodyA.node?.removeFromParent()
-                contact.bodyB.node?.removeFromParent()
-//                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
+//                contact.bodyA.node?.removeFromParent()
+//                contact.bodyB.node?.removeFromParent()
+                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
@@ -436,29 +437,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for i in 1...16 {
             createSetUpBall(x: CGFloat(i*width + 25), y: 1180)
         }
-        for ball in shotBalls {
-            print(ball.physicsBody?.allContactedBodies())
-        }
+        
     }
     
     
     
     func chainReaction(ball: SKNode, color: String) {
         
+        print ("test")
+        
         let location = (ball.position)
-        let balls = nodesNearPoint(container: self, point: location, maxDistance: 50)
-        if (balls.count) > 1{
-            for body in balls {
-                if body.name == color {
-                    chainReaction(ball: body, color: color)
-                    if body != nil {
-                    body.removeFromParent()
-                    }
-                } else {
-                    body.removeFromParent()
-                }
-            }
+        let balls = nodesNearPoint(container: self, point: location, maxDistance: 60)
+        
+        for node in balls {
+            node.removeFromParent() 
         }
+        print (balls)
+        
+//        if (balls.count) > 1{
+//            for body in balls {
+//                if body.name == color {
+//                    chainReaction(ball: body, color: color)
+//                    if body != nil {
+//                    body.removeFromParent()
+//                    }
+//                } else {
+//                    body.removeFromParent()
+//                }
+//            }
+//        }
         
     }
     
