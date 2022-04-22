@@ -103,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(resetButton)
         
         hammerButton = SKSpriteNode(imageNamed: "hammer")
-        hammerButton.position = CGPoint(x: 630, y: 130)
+        hammerButton.position = CGPoint(x: 200, y: 60)
         hammerButton.zPosition = 2
         addChild(hammerButton)
         
@@ -512,3 +512,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 }
 
 
+/**
+ todo list:
+ effects for collisions
+ add score label
+ add view for high score and current score
+ music
+ 
+ */
