@@ -141,14 +141,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node! is SKSpriteNode {
             if shotBalls.contains(contact.bodyA.node as! SKSpriteNode) && shotBalls.contains(contact.bodyB.node! as! SKSpriteNode) {
-                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
                 contact.bodyA.node?.physicsBody?.isDynamic = false
                 contact.bodyB.node?.physicsBody?.isDynamic = false
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
 //                contact.bodyA.node?.removeFromParent()
 //                contact.bodyB.node?.removeFromParent()
-                chainReaction(ball: contact.bodyB.node!, color: (contact.bodyA.node?.name)!)
+                chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
                 
                 bars += 1
                 barsLabel.text = "Bars Available: \(bars)"
@@ -444,17 +443,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func chainReaction(ball: SKNode, color: String) {
         
-        print ("test")
-        
         let location = (ball.position)
-        let balls = nodesNearPoint(container: self, point: location, maxDistance: 60)
+        var balls = nodesNearPoint(container: self, point: location, maxDistance: 80)
         
         for node in balls {
-            node.removeFromParent() 
+            if node.name == color {
+            node.removeFromParent()
+            }
         }
+        
         print (balls)
         
-//        if (balls.count) > 1{
+//        if (balls.count) > 1 {
 //            for body in balls {
 //                if body.name == color {
 //                    chainReaction(ball: body, color: color)
