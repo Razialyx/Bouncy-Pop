@@ -25,8 +25,6 @@ func /(point: CGPoint, scalar: CGFloat) -> CGPoint {
     return CGPoint(x: point.x / scalar, y: point.y / scalar)
 }
 
-
-
 // function to square root
 
 #if !(arch(x86_64) || arch(arm64))
@@ -34,8 +32,6 @@ func sqrt(a: CGFloat) -> CGFloat {
     return CGFloat(sqrtf(Float(a)))
 }
 #endif
-
-
 
 // gets the length between two points using Pythagorean theorem
 
@@ -65,21 +61,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var resetButton: SKSpriteNode!
     var hammerButton: SKSpriteNode!
     var barsLabel: SKLabelNode!
+    var scoreLabel: SKLabelNode!
     var cannon: SKSpriteNode!
     var labelBackground: SKSpriteNode!
+    var scoreBackground: SKSpriteNode!
     var bars = 0
+    var score = 0
     var badShots = 0 {
         didSet {
             print (badShots)
             if badShots != 0 {
-            if badShots % 8 == 0 {
-                shotBalls.last?.removeFromParent()
-                addNewLayer(amount: 17, width: 40, y: CGFloat(1180 - badShots * 20))
-                
-            } else if badShots % 4 == 0{
-                shotBalls.last?.removeFromParent()
-                addNewLayer(amount: 16, width: 40, y: CGFloat(1180 - badShots * 20))
-            }
+                if badShots % 8 == 0 {
+                    shotBalls.last?.removeFromParent()
+                    addNewLayer(amount: 17, width: 40, y: CGFloat(1180 - badShots * 20))
+                    
+                } else if badShots % 4 == 0 {
+                    shotBalls.last?.removeFromParent()
+                    addNewLayer(amount: 16, width: 40, y: CGFloat(1180 - badShots * 20))
+                }
             }
         }
     }
@@ -117,6 +116,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         labelBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(50))
         addChild(labelBackground)
         
+        scoreLabel = SKLabelNode(text: "Score: 0")
+        scoreLabel.position = CGPoint(x: 570, y: 80)
+        scoreLabel.fontColor = .blue
+        scoreLabel.fontSize = 40
+        scoreLabel.fontName = "Cochin Bold Italic"
+        addChild(scoreLabel)
+        
+        scoreBackground = SKSpriteNode(color: UIColor.orange, size: CGSize(width: CGFloat(scoreLabel.frame.size.width + 20), height:CGFloat(scoreLabel.frame.size.height + 10)))
+        scoreBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(93))
+        addChild(scoreBackground)
+        
         cannon = SKSpriteNode(imageNamed: "cannon")
         cannon.position = CGPoint(x: 350, y: 70)
         cannon.zPosition = 2
@@ -145,36 +155,68 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.physicsBody?.isDynamic = false
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
-//                contact.bodyA.node?.removeFromParent()
-//                contact.bodyB.node?.removeFromParent()
-                chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
+                if let pop = SKEmitterNode(fileNamed: "ballPop") {
+                    pop.position.y -= 35
+                    contact.bodyA.node?.addChild(pop)
+                    
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
+                    self!.chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
+                    
+                }
                 
                 bars += 1
+                score += 1
                 barsLabel.text = "Bars Available: \(bars)"
+                scoreLabel.text = "Score: \(score)"
             } else {
                 badShots += 1
             }
             
         }
         
-        
+        for ball in shotBalls {
+            if ball.position.y < 80 {
+                var dialogMessage = UIAlertController(title: "Game Over!", message: "Click to continue", preferredStyle: .alert)
+                 
+                 // Create OK button with action handler
+                let ok = UIAlertAction(title: "Restart", style: .default, handler: { [self] (action) -> Void in
+                     for node in shotBalls {
+                         node.removeFromParent()
+                     }
+                     for node in madeBars {
+                         node.removeFromParent()
+                     }
+                     barTime = false
+                     bars = 0
+                     badShots = 0
+                     barsLabel.text = "Bars Available: 0"
+                     setUp()
+                  })
+                 
+                 //Add OK button to a dialog message
+                 dialogMessage.addAction(ok)
+                 // Present Alert to
+//                 self.present(dialogMessage, animated: true, completion: nil)
+            }
+        }
         
     }
     
     
-        func touchDown(atPoint pos : CGPoint) {
-        }
+    func touchDown(atPoint pos : CGPoint) {
+    }
     
-        func touchMoved(toPoint pos : CGPoint) {
-        }
+    func touchMoved(toPoint pos : CGPoint) {
+    }
     
-        func touchUp(atPoint pos : CGPoint) {
-        }
+    func touchUp(atPoint pos : CGPoint) {
+    }
     
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
         
         
         if let touch = touches.first {
@@ -279,9 +321,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         projectile.run(launch)
         
-       randomizeBall()
+        randomizeBall()
         
-    let preview = SKSpriteNode(imageNamed: image)
+        let preview = SKSpriteNode(imageNamed: image)
         
         preview.position = CGPoint(x: 350, y: 50)
         preview.zPosition = pos
@@ -293,7 +335,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func randomizeBall() {
         let num = Int.random(in: 1...6)
-        
         
         switch num {
         case 1:
@@ -322,25 +363,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func makeBar(_ touches: Set<UITouch>) {
         
-        
         let width = 10
         let height = 80
         
         if (bars > 0) {
             
-        
-        guard let touch = touches.first else {
-            return
-        }
-        let touchLocation = touch.location(in: self)
-        let bar = SKSpriteNode(color: .blue, size: CGSize(width: width, height: height))
-        bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width, height: height))
-        bar.physicsBody!.isDynamic = false
-        bar.zRotation = CGFloat.random(in: 0...5)
-        bar.position = touchLocation
-        bar.name = "bar"
-        madeBars.append(bar)
-        addChild(bar)
+            guard let touch = touches.first else {
+                return
+            }
+            let touchLocation = touch.location(in: self)
+            let bar = SKSpriteNode(color: .blue, size: CGSize(width: width, height: height))
+            bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width, height: height))
+            bar.physicsBody!.isDynamic = false
+            bar.zRotation = CGFloat.random(in: 0...5)
+            bar.position = touchLocation
+            bar.name = "bar"
+            madeBars.append(bar)
+            addChild(bar)
             bars -= 1
             barsLabel.text = "Bars Available: \(bars)"
         } else {
@@ -358,67 +397,66 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createSetUpBall(x: CGFloat, y: CGFloat) {
-            
-            let num = Int.random(in: 1...6)
-            
-            switch num {
-            case 1:
-                image = "ballBlue"
-                break
-            case 2:
-                image = "ballCyan"
-                break
-            case 3:
-                image = "ballGreen"
-                break
-            case 4:
-                image = "ballGrey"
-                break
-            case 5:
-                image = "ballRed"
-                break
-            case 6:
-                image = "ballYellow"
-                break
-            default:
-                image = "ballPurple"
-    
-            }
-            let ball = SKSpriteNode(imageNamed: image)
-            // Chooses one of the touches to work with
-    
-    
-            // Sets up initial location of ball
-    
-            ball.name = image
-            ball.position = CGPoint(x: x,y: y)
-    
-            // gives all the properties to the ball
-    
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
         
-            ball.physicsBody?.affectedByGravity = false;
-            ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
-            ball.physicsBody!.restitution = 0
-            ball.physicsBody?.isDynamic = false
-            ball.zPosition = 1
-            ball.physicsBody!.linearDamping = 0
-            ball.physicsBody!.mass = 0.1
+        let num = Int.random(in: 1...6)
         
-        
-    
-        shotBalls.append(ball)
-            addChild(ball)
-
-        let preview = SKSpriteNode(imageNamed: image)
-            
-            preview.position = CGPoint(x: 350, y: 50)
-            preview.zPosition = pos
-            addChild(preview)
-            pos += 1
-            
+        switch num {
+        case 1:
+            image = "ballBlue"
+            break
+        case 2:
+            image = "ballCyan"
+            break
+        case 3:
+            image = "ballGreen"
+            break
+        case 4:
+            image = "ballGrey"
+            break
+        case 5:
+            image = "ballRed"
+            break
+        case 6:
+            image = "ballYellow"
+            break
+        default:
+            image = "ballPurple"
             
         }
+        let ball = SKSpriteNode(imageNamed: image)
+        // Chooses one of the touches to work with
+        
+        // Sets up initial location of ball
+        
+        ball.name = image
+        ball.position = CGPoint(x: x,y: y)
+        
+        // gives all the properties to the ball
+        
+        ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
+        
+        ball.physicsBody?.affectedByGravity = false;
+        ball.physicsBody!.contactTestBitMask
+        ball.physicsBody!.collisionBitMask
+        ball.physicsBody!.restitution = 0
+        ball.physicsBody?.isDynamic = false
+        ball.zPosition = 1
+        ball.physicsBody!.linearDamping = 0
+        ball.physicsBody!.mass = 0.1
+        
+        
+        
+        shotBalls.append(ball)
+        addChild(ball)
+        
+        let preview = SKSpriteNode(imageNamed: image)
+        
+        preview.position = CGPoint(x: 350, y: 50)
+        preview.zPosition = pos
+        addChild(preview)
+        pos += 1
+        
+    }
     
     func setUp() {
         
@@ -448,24 +486,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         for node in balls {
             if node.name == color {
-            node.removeFromParent()
+                node.removeFromParent()
             }
         }
         
         print (balls)
         
-//        if (balls.count) > 1 {
-//            for body in balls {
-//                if body.name == color {
-//                    chainReaction(ball: body, color: color)
-//                    if body != nil {
-//                    body.removeFromParent()
-//                    }
-//                } else {
-//                    body.removeFromParent()
-//                }
-//            }
-//        }
+        //        if (balls.count) > 1 {
+        //            for body in balls {
+        //                if body.name == color {
+        //                    chainReaction(ball: body, color: color)
+        //                    if body != nil {
+        //                    body.removeFromParent()
+        //                    }
+        //                } else {
+        //                    body.removeFromParent()
+        //                }
+        //            }
+        //        }
         
     }
     
@@ -476,7 +514,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if node is SKSpriteNode {
                 let dx = point.x - node.position.x
                 let dy = point.y - node.position.y
-
+                
                 let distance = sqrt(dx*dx + dy*dy)
                 if (distance <= maxDistance) {
                     array.append(node)
@@ -513,10 +551,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
 
 /**
+ 
  todo list:
- effects for collisions
- add score label
  add view for high score and current score
  music
+ that slide up view or a dialog for angle control of the bar
+ make end game
  
  */
