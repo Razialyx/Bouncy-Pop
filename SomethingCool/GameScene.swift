@@ -62,6 +62,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var hammerButton: SKSpriteNode!
     var barsLabel: SKLabelNode!
     var scoreLabel: SKLabelNode!
+    var gameOverLabel: SKLabelNode!
+    var continueButton: SKLabelNode!
     var cannon: SKSpriteNode!
     var labelBackground: SKSpriteNode!
     var scoreBackground: SKSpriteNode!
@@ -73,11 +75,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if badShots != 0 {
                 if badShots % 8 == 0 {
                     shotBalls.last?.removeFromParent()
-                    addNewLayer(amount: 17, width: 40, y: CGFloat(1180 - badShots * 20))
+                    addNewLayer(amount: 17, width: 40, y: CGFloat(1180 - badShots * 10))
                     
                 } else if badShots % 4 == 0 {
                     shotBalls.last?.removeFromParent()
-                    addNewLayer(amount: 16, width: 40, y: CGFloat(1180 - badShots * 20))
+                    addNewLayer(amount: 16, width: 40, y: CGFloat(1180 - badShots * 10))
                 }
             }
         }
@@ -112,7 +114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         barsLabel.fontName = "Avenir Next Bold Italic"
         addChild(barsLabel)
         
-        labelBackground = SKSpriteNode(color: UIColor.red, size: CGSize(width: CGFloat(barsLabel.frame.size.width + 20), height:CGFloat(barsLabel.frame.size.height + 5)))
+        labelBackground = SKSpriteNode(color: UIColor.red, size: CGSize(width: CGFloat(barsLabel.frame.size.width + 40), height:CGFloat(barsLabel.frame.size.height + 5)))
         labelBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(50))
         addChild(labelBackground)
         
@@ -123,7 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.fontName = "Cochin Bold Italic"
         addChild(scoreLabel)
         
-        scoreBackground = SKSpriteNode(color: UIColor.orange, size: CGSize(width: CGFloat(scoreLabel.frame.size.width + 20), height:CGFloat(scoreLabel.frame.size.height + 10)))
+        scoreBackground = SKSpriteNode(color: UIColor.orange, size: CGSize(width: CGFloat(scoreLabel.frame.size.width + 100), height:CGFloat(scoreLabel.frame.size.height + 10)))
         scoreBackground.position = CGPoint(x: CGFloat(570), y: CGFloat(93))
         addChild(scoreBackground)
         
@@ -162,7 +164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
-                    
+                
                 
                 
                 bars += 1
@@ -176,36 +178,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         for ball in shotBalls {
-            print (ball.position.y)
-            if ball.position.y < 100 && !ball.physicsBody!.isDynamic{
+            
+            if ball.position.y < 200 && !ball.physicsBody!.isDynamic{
                 
-                var gameOverLabel: SKLabelNode!
+                print (ball)
                 
                 gameOverLabel = SKLabelNode(text: "Game Over")
-                gameOverLabel.fontName = "Apple SD Gothic Neo ExtraBold"
+                gameOverLabel.fontName = "Hoefler Text Black Italic"
                 gameOverLabel.fontSize = 100
+                gameOverLabel.fontColor = .purple
                 gameOverLabel.position = CGPoint(x: 350, y: 700)
                 addChild(gameOverLabel)
                 
                 
-                     for node in shotBalls {
-                         node.removeFromParent()
-                     }
-                     for node in madeBars {
-                         node.removeFromParent()
-                     }
-                     barTime = false
-                     bars = 0
-                     badShots = 0
-                     barsLabel.text = "Bars Available: 0"
-                     setUp()
-                  
-                 
-
+                
+                continueButton = SKLabelNode(text: "Continue")
+                continueButton.fontName = "Gill Sans Bold"
+                continueButton.fontSize = 50
+                continueButton.fontColor = .green
+                continueButton.position = CGPoint(x: 350, y: 600)
+                addChild(continueButton)
+                
+                
+                for node in shotBalls {
+                    node.removeFromParent()
+                }
+                for node in madeBars {
+                    node.removeFromParent()
+                }
+                barTime = false
+                bars = 0
+                badShots = 0
+                barsLabel.text = "Bars Available: 0"
+                setUp()
+                
+                
+                
+            }
+            
         }
         
-    }
-        print (shotBalls.last?.name)
     }
     
     
@@ -235,6 +247,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 for node in madeBars {
                     node.removeFromParent()
                 }
+                
+                if gameOverLabel != nil && continueButton != nil {
+                    
+                    gameOverLabel.removeFromParent()
+                    continueButton.removeFromParent()
+                }
+                
                 barTime = false
                 bars = 0
                 badShots = 0
@@ -547,6 +566,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  add view for high score and current score
  music
  that slide up view or a dialog for angle control of the bar
- make end game
+ 
  
  */
