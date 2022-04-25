@@ -14,7 +14,6 @@ class Player {
     init(name: String, password: String) {
         self.name = name
         self.password = password
-        var test: Int
     }
  
 }
