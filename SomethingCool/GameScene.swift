@@ -69,7 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     var badShots = 0 {
         didSet {
-            print (badShots)
+            
             if badShots != 0 {
                 if badShots % 8 == 0 {
                     shotBalls.last?.removeFromParent()
@@ -156,14 +156,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             if contact.bodyA.node?.name == contact.bodyB.node?.name {
                 if let pop = SKEmitterNode(fileNamed: "ballPop") {
-                    pop.position.y -= 35
-                    contact.bodyA.node?.addChild(pop)
+                    pop.position = contact.bodyA.node!.position
+                    pop.zPosition = 3
+                    self.addChild(pop)
                     
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
-                    self!.chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
+                chainReaction(ball: contact.bodyA.node!, color: (contact.bodyA.node?.name)!)
                     
-                }
+                
                 
                 bars += 1
                 score += 1
@@ -176,11 +176,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         for ball in shotBalls {
-            if ball.position.y < 80 {
-                var dialogMessage = UIAlertController(title: "Game Over!", message: "Click to continue", preferredStyle: .alert)
-                 
-                 // Create OK button with action handler
-                let ok = UIAlertAction(title: "Restart", style: .default, handler: { [self] (action) -> Void in
+            print (ball.position.y)
+            if ball.position.y < 100 && !ball.physicsBody!.isDynamic{
+                
+                var gameOverLabel: SKLabelNode!
+                
+                gameOverLabel = SKLabelNode(text: "Game Over")
+                gameOverLabel.fontName = "Apple SD Gothic Neo ExtraBold"
+                gameOverLabel.fontSize = 100
+                gameOverLabel.position = CGPoint(x: 350, y: 700)
+                addChild(gameOverLabel)
+                
+                
                      for node in shotBalls {
                          node.removeFromParent()
                      }
@@ -192,15 +199,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                      badShots = 0
                      barsLabel.text = "Bars Available: 0"
                      setUp()
-                  })
+                  
                  
-                 //Add OK button to a dialog message
-                 dialogMessage.addAction(ok)
-                 // Present Alert to
-//                 self.present(dialogMessage, animated: true, completion: nil)
-            }
+
         }
         
+    }
+        print (shotBalls.last?.name)
     }
     
     
@@ -305,12 +310,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         shotBalls.append(projectile)
         addChild(projectile)
-        print (projectile.size.width)
+        
         
         // Makes vector for the ball to shoot on
         let vect = CGVector(dx: offset.x, dy: offset.y)
         
-        //        print (offset)
+        
         
         let length = sqrt(vect.dx * vect.dx + vect.dy * vect.dy)
         let time = 100/length
@@ -436,8 +441,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
         
         ball.physicsBody?.affectedByGravity = false;
-        ball.physicsBody!.contactTestBitMask
-        ball.physicsBody!.collisionBitMask
+        ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
         ball.physicsBody!.restitution = 0
         ball.physicsBody?.isDynamic = false
         ball.zPosition = 1
@@ -490,21 +494,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-        print (balls)
-        
-        //        if (balls.count) > 1 {
-        //            for body in balls {
-        //                if body.name == color {
-        //                    chainReaction(ball: body, color: color)
-        //                    if body != nil {
-        //                    body.removeFromParent()
-        //                    }
-        //                } else {
-        //                    body.removeFromParent()
-        //                }
-        //            }
-        //        }
-        
     }
     
     func nodesNearPoint(container:SKNode, point:CGPoint, maxDistance:CGFloat) -> [SKNode] {
@@ -553,6 +542,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 /**
  
  todo list:
+ 
+ sound effects for impacts
  add view for high score and current score
  music
  that slide up view or a dialog for angle control of the bar
