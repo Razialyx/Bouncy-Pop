@@ -10,6 +10,15 @@ import UIKit
 
 class StartViewController: UIViewController {
     
+    @IBOutlet weak var background: UIImageView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.sendSubviewToBack(background)
+        super.viewDidLoad()
+        
+    }
+    
     @IBOutlet weak var userNameTextField: UITextField!
     
     @IBOutlet weak var passwordTextField: UITextField!

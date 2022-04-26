@@ -8,11 +8,15 @@
 import UIKit
 
 class SplashController: UIViewController {
+    @IBOutlet weak var background: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+        view.sendSubviewToBack(background)
+//        view.backgroundColor = UIColor(patternImage: UIImage(named: "purpleLoginBackground.png")!)
+//        assignbackground()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
             self.performSegue(withIdentifier: "OpenMenu", sender: nil)
         }
     }
+    
 }
