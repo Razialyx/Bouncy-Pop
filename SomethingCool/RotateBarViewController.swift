@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SpriteKit
+import GameplayKit
 
 class RotateBarViewController: UIViewController {
 
@@ -16,7 +18,7 @@ class RotateBarViewController: UIViewController {
         
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
-            if let scene = GameScene(fileNamed: "GameScene") {
+            if let scene = GameScene(fileNamed: "RotateBarScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFit
                 
@@ -50,4 +52,4 @@ class RotateBarViewController: UIViewController {
     
 }
 
-}
+

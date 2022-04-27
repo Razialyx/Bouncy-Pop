@@ -174,10 +174,10 @@
             </objects>
             <point key="canvasLocation" x="1042.0289855072465" y="115.84821428571428"/>
         </scene>
-        <!--View Controller-->
+        <!--Rotate Bar View Controller-->
         <scene sceneID="DDN-yd-zmx">
             <objects>
-                <viewController storyboardIdentifier="RotateBarVC" id="vwv-CG-7gh" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RotateBarVC" id="vwv-CG-7gh" customClass="RotateBarViewController" customModule="Bouncy_Pop" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="QcX-NS-PND">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
