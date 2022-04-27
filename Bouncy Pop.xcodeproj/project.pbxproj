@@ -13,6 +13,7 @@
 		6446ADA6281326160033EA03 /* ballPop.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6446ADA5281326160033EA03 /* ballPop.sks */; };
 		648E6F902811D39E0042C8FD /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648E6F8F2811D39E0042C8FD /* Player.swift */; };
 		648E6F922811D7DA0042C8FD /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648E6F912811D7DA0042C8FD /* StartViewController.swift */; };
+		6491CED72819B22000FC6C72 /* pop.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6491CED62819B22000FC6C72 /* pop.sks */; };
 		6497435E2817213400AB5DE0 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6497435D2817213400AB5DE0 /* SplashViewController.swift */; };
 		64A8066727443F2000BF6584 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A8066627443F2000BF6584 /* AppDelegate.swift */; };
 		64A8066927443F2000BF6584 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 64A8066827443F2000BF6584 /* GameScene.sks */; };
@@ -30,6 +31,7 @@
 		6446ADA5281326160033EA03 /* ballPop.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ballPop.sks; sourceTree = "<group>"; };
 		648E6F8F2811D39E0042C8FD /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		648E6F912811D7DA0042C8FD /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
+		6491CED62819B22000FC6C72 /* pop.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = pop.sks; sourceTree = "<group>"; };
 		6497435D2817213400AB5DE0 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		64A8066327443F2000BF6584 /* Bouncy Pop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bouncy Pop.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A8066627443F2000BF6584 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -73,20 +75,21 @@
 			isa = PBXGroup;
 			children = (
 				64A8066627443F2000BF6584 /* AppDelegate.swift */,
+				64A8067527443F2100BF6584 /* Info.plist */,
+				64A8067027443F2000BF6584 /* Main.storyboard */,
+				648E6F8F2811D39E0042C8FD /* Player.swift */,
+				64B3492427ECE2A3002A9965 /* Ball.swift */,
 				64A8066827443F2000BF6584 /* GameScene.sks */,
 				64A8066C27443F2000BF6584 /* GameScene.swift */,
+				64A8066E27443F2000BF6584 /* GameViewController.swift */,
+				641E64BB28197FD3001919EC /* RotateBarScene.sks */,
+				641E64BF281980E4001919EC /* RotateBarScene.swift */,
+				641E64BD28198032001919EC /* RotateBarViewController.swift */,
 				6497435D2817213400AB5DE0 /* SplashViewController.swift */,
 				648E6F912811D7DA0042C8FD /* StartViewController.swift */,
-				64A8066E27443F2000BF6584 /* GameViewController.swift */,
 				64EE8FC9280F2B0300965FC3 /* Assets.xcassets */,
-				64A8067027443F2000BF6584 /* Main.storyboard */,
-				64A8067527443F2100BF6584 /* Info.plist */,
-				64B3492427ECE2A3002A9965 /* Ball.swift */,
 				6446ADA5281326160033EA03 /* ballPop.sks */,
-				648E6F8F2811D39E0042C8FD /* Player.swift */,
-				641E64BB28197FD3001919EC /* RotateBarScene.sks */,
-				641E64BD28198032001919EC /* RotateBarViewController.swift */,
-				641E64BF281980E4001919EC /* RotateBarScene.swift */,
+				6491CED62819B22000FC6C72 /* pop.sks */,
 			);
 			path = SomethingCool;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 				6446ADA6281326160033EA03 /* ballPop.sks in Resources */,
 				64A8067227443F2000BF6584 /* Main.storyboard in Resources */,
 				64EE8FCA280F2B0300965FC3 /* Assets.xcassets in Resources */,
+				6491CED72819B22000FC6C72 /* pop.sks in Resources */,
 				64A8066927443F2000BF6584 /* GameScene.sks in Resources */,
 				641E64BC28197FD3001919EC /* RotateBarScene.sks in Resources */,
 			);

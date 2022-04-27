@@ -12,15 +12,32 @@ import UIKit
 class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     
     var instance : GameViewController!
+    var bar: SKSpriteNode!
+    let barPos = CGPoint(x: 360, y: 667)
     
     override func didMove(to view: SKView) {
         
-        let background = SKSpriteNode(imageNamed: "background")
+        let background = SKSpriteNode(imageNamed: "barBackground")
         
         background.position = CGPoint(x: 360, y: 620)
         background.blendMode = .replace
         background.zPosition = -1
         addChild(background)
+        
+        
+        
+        
+        bar = SKSpriteNode(color: .blue, size: CGSize(width: 20, height: 160))
+        bar.position = barPos
+        bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 160))
+        bar.physicsBody!.isDynamic = false
+        bar.name = "bar"
+        addChild(bar)
+        
+        let joint = SKPhysicsJointPin.joint(
+            withBodyA: bar.physicsBody!, bodyB: (scene?.physicsBody)!, anchor: barPos)
+
+        scene!.physicsWorld.add(joint)
         
         physicsWorld.contactDelegate = self
         
@@ -41,6 +58,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func touchMoved(toPoint pos : CGPoint) {
+        
     }
     
     func touchUp(atPoint pos : CGPoint) {
@@ -60,23 +78,38 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     
     func makeBar(_ touches: Set<UITouch>) {
         
-        let width = 10
-        let height = 80
-        guard let touch = touches.first else {
-            return
-        }
-        let touchLocation = touch.location(in: self)
-        let bar = SKSpriteNode(color: .blue, size: CGSize(width: width, height: height))
-        bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width, height: height))
-        bar.physicsBody!.isDynamic = false
-        bar.zRotation = CGFloat.random(in: 0...5)
-        bar.position = touchLocation
-        bar.name = "bar"
-        addChild(bar)
+        
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else {
+            return
+        }
+        let touchLocation = touch.location(in: self)
+        
+        // Sets up initial location of ball
+        
+        
+        
+        
+        
+        // Determine offset of location to projectile
+        let offset = touchLocation - barPos
+        
+        // Detects if you are shooting down or backwards and yeets that
+        if offset.y < 0 { return }
+        
+        let angle = atan(offset.y / offset.x)
+        bar.zRotation = angle + CGFloat(0.5 * Double.pi)
+        // if statement for x position, if greater than middle, yScale = -1
+        if touch.location(in: self).x > 360 {
+            bar.yScale = -1
+            bar.zRotation = angle + CGFloat(0.5 * Double.pi)
+        } else {
+            bar.yScale = 1
+            bar.zRotation = angle + CGFloat(0.5 * Double.pi)
+        }
         
     }
     

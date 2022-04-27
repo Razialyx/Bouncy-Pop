@@ -569,6 +569,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  add view for high score and current score
  music
  that slide up view or a dialog for angle control of the bar
+ add comments
  
  
  */
