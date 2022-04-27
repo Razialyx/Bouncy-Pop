@@ -1,17 +1,15 @@
 //
-//  GameViewController.swift
-//  SomethingCool
+//  RotateBarViewController.swift
+//  Bouncy Pop
 //
-//  Created by HPro2 on 11/16/21.
+//  Created by HPro2 on 4/27/22.
 //
 
 import UIKit
-import SpriteKit
-import GameplayKit
 
-class GameViewController: UIViewController {
-    
-    var instance = self
+class RotateBarViewController: UIViewController {
+
+   
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +19,7 @@ class GameViewController: UIViewController {
             if let scene = GameScene(fileNamed: "GameScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFit
-                scene.instance = self
+                
                 // Present the scene
                 view.presentScene(scene)
                 view.showsPhysics = false
@@ -50,4 +48,6 @@ class GameViewController: UIViewController {
         return true
     }
     
+}
+
 }

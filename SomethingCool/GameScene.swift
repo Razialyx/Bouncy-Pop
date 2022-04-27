@@ -46,7 +46,7 @@ extension CGPoint {
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-    
+    var instance : GameViewController!
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
     private final var SPEED = 3
@@ -265,6 +265,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 if barTime {
                     hammerButton.texture = SKTexture(imageNamed: "hammerDown")
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let rotateBarController = storyboard.instantiateViewController(identifier: "RotateBarVC") as! RotateBarViewController
+                    instance.present(rotateBarController, animated: true, completion: nil)
                     
                 } else {
                     hammerButton.texture = SKTexture(imageNamed: "hammer")
