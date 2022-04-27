@@ -25,18 +25,13 @@ class StartViewController: UIViewController {
     
     
     @IBAction func startGamePressed(_ sender: Any) {
-        var player: Player
         
         if let newName = userNameTextField.text {
             if let newPassword = passwordTextField.text {
-                player = Player(name: newName, password: newPassword)
-                
-                let defaults = UserDefaults.standard
-                defaults.setValue(newPassword, forKey: newName)
-                defaults.setValue(0, forKey: "HighScore")
+                print("Hi")
+                var player = Player(name: newName, password: newPassword)
             }
         }
-        
     }
     
 }
