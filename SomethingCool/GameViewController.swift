@@ -11,7 +11,8 @@ import GameplayKit
 
 class GameViewController: UIViewController {
     
-    var instance = self
+    var barAngle = 0
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()

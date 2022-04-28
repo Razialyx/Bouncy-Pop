@@ -15,6 +15,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     var bar: SKSpriteNode!
     let barPos = CGPoint(x: 360, y: 667)
     var upArrow, downArrow: SKSpriteNode!
+    var confirmButton: SKLabelNode!
     var upBool, downBool: Bool!
     
     override func didMove(to view: SKView) {
@@ -29,7 +30,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         upBool = false
         downBool = false
         
-        bar = SKSpriteNode(color: .blue, size: CGSize(width: 20, height: 160))
+        bar = SKSpriteNode(color: .orange, size: CGSize(width: 20, height: 160))
         bar.position = barPos
         bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 160))
         bar.physicsBody!.isDynamic = false
@@ -44,6 +45,14 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         downArrow.position = CGPoint(x: 550, y: 550)
         downArrow.zRotation = Double.pi
         addChild(downArrow)
+        
+        confirmButton = SKLabelNode(text: "Confirm")
+        confirmButton.position = CGPoint(x: 370, y: 350)
+        confirmButton.fontSize = 100
+        confirmButton.fontColor = .yellow
+        confirmButton.fontName = "American Typewriter Bold"
+        addChild(confirmButton)
+        
         
 //        let joint = SKPhysicsJointPin.joint(
 //            withBodyA: bar.physicsBody!, bodyB: (scene?.physicsBody)!, anchor: barPos)
@@ -89,8 +98,11 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
             let tappedNodes = nodes(at: location)
             if tappedNodes.contains(upArrow) {
                 upBool = true
-            } else if tappedNodes.contains(downArrow){
+            } else if tappedNodes.contains(downArrow) {
                 downBool = true
+            } else if tappedNodes.contains(confirmButton) {
+                UserDefaults.standard.set(bar.zRotation, forKey: "barAngle")
+                view?.window?.rootViewController?.dismiss(animated: true)
             }
         }
     }
