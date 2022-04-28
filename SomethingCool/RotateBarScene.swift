@@ -15,6 +15,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     var bar: SKSpriteNode!
     let barPos = CGPoint(x: 360, y: 667)
     var upArrow, downArrow: SKSpriteNode!
+    var upBool, downBool: Bool!
     
     override func didMove(to view: SKView) {
         
@@ -25,6 +26,9 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         background.zPosition = -1
         addChild(background)
         
+        upBool = false
+        downBool = false
+        
         bar = SKSpriteNode(color: .blue, size: CGSize(width: 20, height: 160))
         bar.position = barPos
         bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 160))
@@ -32,12 +36,12 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         bar.name = "bar"
         addChild(bar)
         
-        let upArrow = SKSpriteNode(imageNamed: "arrow")
-        upArrow.position = CGPoint(x: 500, y: 667)
+        upArrow = SKSpriteNode(imageNamed: "arrow")
+        upArrow.position = CGPoint(x: 550, y: 750)
         addChild(upArrow)
         
-        let downArrow = SKSpriteNode(imageNamed: "arrow")
-        downArrow.position = CGPoint(x: 500, y: 500)
+        downArrow = SKSpriteNode(imageNamed: "arrow")
+        downArrow.position = CGPoint(x: 550, y: 550)
         downArrow.zRotation = Double.pi
         addChild(downArrow)
         
@@ -63,7 +67,10 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func touchDown(atPoint pos : CGPoint) {
-        
+        if upArrow.contains(pos) {
+            print ("test")
+            bar.zRotation += 0.1
+        }
     }
     
     func touchMoved(toPoint pos : CGPoint) {
@@ -80,39 +87,28 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         if let touch = touches.first {
             let location = touch.location(in: self)
             let tappedNodes = nodes(at: location)
-            
+            if tappedNodes.contains(upArrow) {
+                upBool = true
+            } else if tappedNodes.contains(downArrow){
+                downBool = true
+            }
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else {
-            return
-        }
-        let touchLocation = touch.location(in: self)
-        
-        // Sets up initial location of ball
-
-        // Determine offset of location to projectile
-        let offset = touchLocation - barPos
-        
-        // Detects if you are shooting down or backwards and yeets that
-        if offset.y < 0 { return }
-        
-        let angle = atan(offset.y / offset.x)
-        bar.zRotation = angle + CGFloat(0.5 * Double.pi)
-        // if statement for x position, if greater than middle, yScale = -1
-        if touch.location(in: self).x > 360 {
-            bar.yScale = -1
-            bar.zRotation = angle + CGFloat(0.5 * Double.pi)
-        } else {
-            bar.yScale = 1
-            bar.zRotation = angle + CGFloat(0.5 * Double.pi)
-        }
         
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        if let touch = touches.first {
+            let location = touch.location(in: self)
+            let tappedNodes = nodes(at: location)
+            if tappedNodes.contains(upArrow) {
+                upBool = false
+            } else if tappedNodes.contains(downArrow){
+                downBool = false
+            }
+        }
         
     }
     
@@ -122,7 +118,11 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func update(_ currentTime: TimeInterval) {
-        
+        if upBool {
+            bar.zRotation -= 0.02
+        } else if downBool {
+            bar.zRotation += 0.02
+        }
     }
     
     

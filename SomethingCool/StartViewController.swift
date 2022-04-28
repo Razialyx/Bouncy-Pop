@@ -12,6 +12,8 @@ class StartViewController: UIViewController {
     
     @IBOutlet weak var background: UIImageView!
     
+    var defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.sendSubviewToBack(background)
@@ -26,9 +28,24 @@ class StartViewController: UIViewController {
     
     @IBAction func startGamePressed(_ sender: Any) {
         
+        if (defaults.string(forKey: userNameTextField.text!) == passwordTextField.text) {
+            
+        } else {
+            var dialogMessage = UIAlertController(title: "Error!", message: "Incorrect username or password!", preferredStyle: .alert)
+             
+             // Create OK button with action handler
+             let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                
+              })
+             
+             //Add OK button to a dialog message
+             dialogMessage.addAction(ok)
+             // Present Alert to
+             self.present(dialogMessage, animated: true, completion: nil)
+        }
+        
         if let newName = userNameTextField.text {
             if let newPassword = passwordTextField.text {
-                print("Hi")
                 var player = Player(name: newName, password: newPassword)
             }
         }

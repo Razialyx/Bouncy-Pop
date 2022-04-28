@@ -134,6 +134,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cannon.zPosition = 2
         addChild(cannon)
         
+        gameOverLabel = SKLabelNode(text: "Game Over")
+        gameOverLabel.fontName = "Hoefler Text Black Italic"
+        gameOverLabel.fontSize = 100
+        gameOverLabel.fontColor = .purple
+        gameOverLabel.position = CGPoint(x: 350, y: 700)
+        gameOverLabel.isHidden = true
+        addChild(gameOverLabel)
+        
+        
+        
+        continueButton = SKLabelNode(text: "Continue")
+        continueButton.fontName = "Gill Sans Bold"
+        continueButton.fontSize = 50
+        continueButton.fontColor = .green
+        continueButton.position = CGPoint(x: 350, y: 600)
+        continueButton.isHidden = true
+        addChild(continueButton)
+        
         physicsWorld.contactDelegate = self
         
         setUp()
@@ -177,46 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        for ball in shotBalls {
-            
-            if ball.position.y < 200 && !ball.physicsBody!.isDynamic{
-                
-                print (ball)
-                
-                gameOverLabel = SKLabelNode(text: "Game Over")
-                gameOverLabel.fontName = "Hoefler Text Black Italic"
-                gameOverLabel.fontSize = 100
-                gameOverLabel.fontColor = .purple
-                gameOverLabel.position = CGPoint(x: 350, y: 700)
-                addChild(gameOverLabel)
-                
-                
-                
-                continueButton = SKLabelNode(text: "Continue")
-                continueButton.fontName = "Gill Sans Bold"
-                continueButton.fontSize = 50
-                continueButton.fontColor = .green
-                continueButton.position = CGPoint(x: 350, y: 600)
-                addChild(continueButton)
-                
-                
-                for node in shotBalls {
-                    node.removeFromParent()
-                }
-                for node in madeBars {
-                    node.removeFromParent()
-                }
-                barTime = false
-                bars = 0
-                badShots = 0
-                barsLabel.text = "Bars Available: 0"
-                setUp()
-                
-                
-                
-            }
-            
-        }
+        
         
     }
     
@@ -234,7 +213,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        
+        for ball in shotBalls {
+            
+            if ball.position.y < 200 && !ball.physicsBody!.isDynamic {
+                
+                print (ball.position)
+                
+                gameOverLabel.isHidden = false
+                continueButton.isHidden = false
+                
+                for node in shotBalls {
+                    node.removeFromParent()
+                }
+                for node in madeBars {
+                    node.removeFromParent()
+                }
+                barTime = false
+                bars = 0
+                badShots = 0
+                barsLabel.text = "Bars Available: 0"
+                setUp()
+                
+                
+                
+            }
+            
+        }
         
         if let touch = touches.first {
             let location = touch.location(in: self)
@@ -248,16 +252,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     node.removeFromParent()
                 }
                 
-                if gameOverLabel != nil && continueButton != nil {
+                
                     
                     gameOverLabel.removeFromParent()
                     continueButton.removeFromParent()
-                }
+                
                 
                 barTime = false
                 bars = 0
+                score = 0
                 badShots = 0
                 barsLabel.text = "Bars Available: 0"
+                scoreLabel.text = "Score: 0"
                 setUp()
             } else if tappedNodes.contains(hammerButton) {
                 
@@ -274,6 +280,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 
+            } else if continueButton != nil &&  tappedNodes.contains(continueButton){
+                
+                gameOverLabel.removeFromParent()
+                continueButton.removeFromParent()
             } else {
                 if barTime {
                     hammerButton.texture = SKTexture(imageNamed: "hammerDown")
@@ -281,9 +291,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 } else {
                     hammerButton.texture = SKTexture(imageNamed: "hammer")
                     makeBall(touches)
+                    print ("ball shot")
                 }
             }
         }
+        
+        
         
     }
     
@@ -552,7 +565,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func update(_ currentTime: TimeInterval) {
-        
+        if score == 0 {
+            if gameOverLabel != nil && continueButton != nil {
+            gameOverLabel.removeFromParent()
+            continueButton.removeFromParent()
+            }
+        }
     }
     
     
@@ -570,6 +588,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  music
  that slide up view or a dialog for angle control of the bar
  add comments
+ continue button
  
  
  */
