@@ -14,6 +14,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     var instance : GameViewController!
     var bar: SKSpriteNode!
     let barPos = CGPoint(x: 360, y: 667)
+    var upArrow, downArrow: SKSpriteNode!
     
     override func didMove(to view: SKView) {
         
@@ -24,9 +25,6 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         background.zPosition = -1
         addChild(background)
         
-        
-        
-        
         bar = SKSpriteNode(color: .blue, size: CGSize(width: 20, height: 160))
         bar.position = barPos
         bar.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 160))
@@ -34,10 +32,20 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         bar.name = "bar"
         addChild(bar)
         
-        let joint = SKPhysicsJointPin.joint(
-            withBodyA: bar.physicsBody!, bodyB: (scene?.physicsBody)!, anchor: barPos)
-
-        scene!.physicsWorld.add(joint)
+        let upArrow = SKSpriteNode(imageNamed: "arrow")
+        upArrow.position = CGPoint(x: 500, y: 667)
+        addChild(upArrow)
+        
+        let downArrow = SKSpriteNode(imageNamed: "arrow")
+        downArrow.position = CGPoint(x: 500, y: 500)
+        downArrow.zRotation = Double.pi
+        addChild(downArrow)
+        
+//        let joint = SKPhysicsJointPin.joint(
+//            withBodyA: bar.physicsBody!, bodyB: (scene?.physicsBody)!, anchor: barPos)
+//
+//        scene!.physicsWorld.add(joint)
+        
         
         physicsWorld.contactDelegate = self
         
@@ -55,6 +63,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func touchDown(atPoint pos : CGPoint) {
+        
     }
     
     func touchMoved(toPoint pos : CGPoint) {
@@ -74,13 +83,6 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
             
         }
     }
-
-    
-    func makeBar(_ touches: Set<UITouch>) {
-        
-        
-        
-    }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else {
@@ -89,11 +91,7 @@ class RotateBarScene: SKScene, SKPhysicsContactDelegate {
         let touchLocation = touch.location(in: self)
         
         // Sets up initial location of ball
-        
-        
-        
-        
-        
+
         // Determine offset of location to projectile
         let offset = touchLocation - barPos
         
